@@ -1,23 +1,25 @@
-// import nodemailer from "nodemailer";
-import SibApiV3Sdk from "sib-api-v3-sdk";
-
-
+import nodemailer from "nodemailer";
 
 
 export const sendEmail = async (to, name, verifyLink) => {
     try {
-        const defaultClient = SibApiV3Sdk.ApiClient.instance;
-        const apiKey = defaultClient.authentications["api-key"];
-        apiKey.apiKey = process.env.BREVO_API_KEY;
-        const client = new SibApiV3Sdk.TransactionalEmailsApi();
-        await client.sendTransacEmail({
-            sender: { name: "TuneHive 🎵", email: process.env.USER_MAIL },
-            to: [{ email: to }],
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.USER_MAIL,
+                pass: process.env.PASS_MAIL,
+            },
+        });
+
+        await transporter.sendMail({
+            from: `"TuneHive 🎵" <${process.env.USER_MAIL}>`,
+            to,
             subject: "Verify your TuneHive music streaming account",
 
-            textContent: "plain text is optional, which is just a fallback, not shown unless HTML fails to load.",
+            //plain text is optional, which is just a fallback, not shown unless HTML fails to load.
+            text: `Hello ${name}, \nPlease click the link below to verify your account: \n${verifyLink} \nThis link will expire in 24 hours.`,
 
-            htmlContent:
+            html:
                 `<div style="font-family:sans-serif;line-height:1.6">
                     <h2>Hi, ${name}</h2>
                     <p>Click the button below to verify your account:</p>
@@ -30,34 +32,40 @@ export const sendEmail = async (to, name, verifyLink) => {
         console.log("Email sent successfully");
     }
     catch (error) {
-        console.log("Email not sent", error);
+        console.log("Email to user not sent", error);
         throw error;
     }
 };
 
-
 export const notifyAdmin = async (email, name) => {
     try {
-        const defaultClient = SibApiV3Sdk.ApiClient.instance;
-        const apiKey = defaultClient.authentications["api-key"];
-        apiKey.apiKey = process.env.BREVO_API_KEY;
-        const client = new SibApiV3Sdk.TransactionalEmailsApi();
-        await client.sendTransacEmail({
-            sender: { name: "TuneHive Bot", email: process.env.USER_MAIL },
-            to: [{ email: process.env.ADMIN_MAIL }],
-            subject: "New User Registered on TuneHive",
-            htmlContent:
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.USER_MAIL,
+                pass: process.env.PASS_MAIL,
+            },
+        });
+
+        await transporter.sendMail({
+            from: `"TuneHive 🎵" <${process.env.USER_MAIL}>`,
+            to: process.env.ADMIN_MAIL,
+            subject: "New user to TuneHive",
+
+            html:
                 `<div style="font-family:sans-serif;line-height:1.6">
                 <h3>Hello Admin,</h3>
                 <p>A new user has just registered on <b>TuneHive</b>.</p>
                 <p><b>Name:</b> ${name}</p>
                 <p><b>Email:</b> ${email}</p>
                 <p>Log in to your admin dashboard to view more details.</p>`
+            ,
         });
-
-        console.log("Admin notified about new user:");
-    } catch (error) {
-        console.error("Failed to send admin notification:", error);
+        
+        console.log("Admin Email sent");
+    }
+    catch (err) {
+        console.log("Email to admin not sent", err);
+        throw err;
     }
 };
-
