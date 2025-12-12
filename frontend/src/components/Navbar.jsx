@@ -4,9 +4,10 @@ import { NavLink } from 'react-router-dom';
 import { UserData } from '../context/usercontext';
 import { assets } from '../assets/assets';
 import { HiMenu, HiX } from "react-icons/hi";
-import { LuPanelRightOpen, LuPanelRightClose} from "react-icons/lu";
+import { LuPanelRightOpen, LuPanelRightClose } from "react-icons/lu";
 import { GiCrown } from "react-icons/gi";
 import { FaCrown } from "react-icons/fa";
+import { useEffect } from 'react';
 
 
 export default function Navbar({ sidebar, setsidebar }) {
@@ -15,6 +16,14 @@ export default function Navbar({ sidebar, setsidebar }) {
     const navigate = useNavigate();
 
     const [showOptions, setShowOptions] = useState(false);
+
+    useEffect(() => {
+        const closeMenu = () => setShowOptions(false);
+        window.addEventListener("click", closeMenu);
+        return () => window.removeEventListener("click", closeMenu);
+    }, []);
+
+
 
     const linkClass = ({ isActive }) =>
         `px-3 md:px-4 py-1 rounded-2xl cursor-pointer transition ${isActive
@@ -61,8 +70,8 @@ export default function Navbar({ sidebar, setsidebar }) {
                         </div>
                     </NavLink>
 
-                    {showOptions ? <HiX className='size-6 text-sky-300' onClick={() => setShowOptions(false)} /> :
-                        <HiMenu className='size-6 text-sky-300' onClick={() => setShowOptions(true)} />}
+                    {showOptions ? <HiX className='size-6 text-sky-300' onClick={(e) => {e.stopPropagation(); setShowOptions(false)}} /> :
+                        <HiMenu className='size-6 text-sky-300' onClick={(e) => {e.stopPropagation(); setShowOptions(true);}} />}
                 </div>
 
                 <div className={`absolute p-1 right-1 top-10 flex-col gap-1 bg-gray-700 text-white rounded ${showOptions ? "flex" : "hidden"} z-5`}>

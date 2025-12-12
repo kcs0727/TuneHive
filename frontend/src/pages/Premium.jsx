@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { UserData } from '../context/usercontext'
 import { PaymentData } from '../context/paymentcontext';
+import toast from 'react-hot-toast';
 
 export default function Premium() {
 
@@ -8,6 +9,7 @@ export default function Premium() {
     const { payit } = PaymentData();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [pendingPlan, setPendingPlan] = useState(null);
+    const sampleCardNumber = "4718 6091 0820 4366";
 
     const handlePayment = async (plan) => {
         if (plan === "Free") payit(plan);
@@ -18,6 +20,9 @@ export default function Premium() {
     }
 
     const onConfirmProceed = async () => {
+        await navigator.clipboard.writeText(sampleCardNumber);
+        toast.success("Card number copied!");
+
         setConfirmOpen(false);
         await payit(pendingPlan);
         setPendingPlan(null);
@@ -231,7 +236,7 @@ export default function Premium() {
                             <p className='font-medium text-center'>This payment does not involve real money.</p>
                             <hr className='text-gray-400 mb-1'/>
                             <p >You can use your <span className="font-medium">own card details</span> or use below <span className="font-medium">virtual card details</span></p>
-                            <div>1. <span className="font-medium">Card number:</span> 4718 6091 0820 4366</div>
+                            <div>1. <span className="font-medium">Card number:</span> {sampleCardNumber}</div>
                             <div>2. Any random Future Expire date, 3 digit CVV, 4 digit OTP</div>
                         </div>
 
@@ -240,7 +245,7 @@ export default function Premium() {
                                 Cancel
                             </button>
                             <button onClick={onConfirmProceed} className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 cursor-pointer">
-                                Proceed to Payment
+                                Copy & Proceed
                             </button>
                         </div>
                     </div>
