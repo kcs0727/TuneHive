@@ -24,6 +24,7 @@ export const sendEmail = async (to, name) => {
                     <p>Upgrade to Premium for ad-free, high-quality music:</p>
                     <a href="${link}" style="background:#1DB954;color:white;padding:10px 20px;
                     border-radius:6px;text-decoration:none;font-weight:bold;">Upgrade Now</a>
+                    <p>Thankyou 😊</p>
                 </div>`
         });
 

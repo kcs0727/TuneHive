@@ -20,7 +20,6 @@ export const registeruser = trycatch(async (req, res) => {
 
     const newuser= await users.create({
         name, email, password: hashed,
-        verified: true,
     });
 
     await sendEmail(email, name);
@@ -67,13 +66,13 @@ export const loginuser = trycatch(async (req, res) => {
         })
     }
 
-    const token = jwt.sign(
+    const Token = jwt.sign(
         { id: user._id },
         process.env.JWT_SECRET,
         { expiresIn: "10d" }
     );
 
-    res.cookie("token", token, {
+    res.cookie("token", Token, {
         maxAge: 10 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
