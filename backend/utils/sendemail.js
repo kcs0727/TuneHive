@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 
 
-export const sendEmail = async (to, name, verifyLink) => {
+export const sendEmail = async (to, name) => {
     try {
         const transporter = nodemailer.createTransport({
             service: "gmail",
@@ -10,22 +10,20 @@ export const sendEmail = async (to, name, verifyLink) => {
                 pass: process.env.PASS_MAIL,
             },
         });
+        const link=`${process.env.FRONTEND_URL}/premium`;
 
         await transporter.sendMail({
             from: `"TuneHive 🎵" <${process.env.USER_MAIL}>`,
             to,
-            subject: "Verify your TuneHive music streaming account",
-
-            //plain text is optional, which is just a fallback, not shown unless HTML fails to load.
-            text: `Hello ${name}, \nPlease click the link below to verify your account: \n${verifyLink} \nThis link will expire in 24 hours.`,
+            subject: "Welcome to TuneHive 🎵",
 
             html:
                 `<div style="font-family:sans-serif;line-height:1.6">
                     <h2>Hi, ${name}</h2>
-                    <p>Click the button below to verify your account:</p>
-                    <a href="${verifyLink}" style="background:#1DB954;color:white;padding:10px 20px;
-                        border-radius:6px;text-decoration:none;font-weight:bold;">Verify account</a>
-                    <p>This link will expire in 24 hours.</p>
+                    <p>Your account has been successfully created. Enjoy unlimited music streaming on TuneHive!</p>
+                    <p>Upgrade to Premium for ad-free, high-quality music:</p>
+                    <a href="${link}" style="background:#1DB954;color:white;padding:10px 20px;
+                    border-radius:6px;text-decoration:none;font-weight:bold;">Upgrade Now</a>
                 </div>`
         });
 

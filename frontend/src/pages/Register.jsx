@@ -47,7 +47,7 @@ export default function Register() {
                     </div>
 
                     <div>
-                        <button type='submit' disabled={btnloading} className='w-full bg-sky-300 hover:bg-sky-500 hover:text-white text-black font-semibold py-1 rounded-md my-1 text-lg cursor-pointer'>{btnloading?"sending Email..":"Register"}</button>
+                        <button type='submit' disabled={btnloading} className='w-full bg-sky-300 hover:bg-sky-500 hover:text-white text-black font-semibold py-1 rounded-md my-1 text-lg cursor-pointer'>{btnloading?"Processing..":"Register"}</button>
 
                         <div>Already have an account?
                             <Link to="/login" className="text-blue-400 underline"> Login</Link>

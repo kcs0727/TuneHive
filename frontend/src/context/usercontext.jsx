@@ -44,10 +44,11 @@ export const UserProvider = ({ children }) => {
                 name, email, password
             })
 
+            toast.success(data.message);
+            setuser(data.user);
+            setisauth(true);
             setbtnloading(false);
-            navigate("/verify-notice", {
-                state: { message: data.message },
-            });
+            navigate("/")
         }
         catch (err) {
             toast.error(err.response?.data?.message || "Registration failed");
@@ -70,13 +71,7 @@ export const UserProvider = ({ children }) => {
             navigate("/");
         }
         catch (err) {
-            const msg = err.response?.data?.message;
-            if (msg?.toLowerCase().includes("not verified") || msg?.toLowerCase().includes("check your email")) {
-                navigate("/verify-notice", {
-                    state: {message: msg},
-                });
-            }
-            else toast.error(msg || "Login failed");
+            toast.error(err.response?.data?.message || "Login failed");
             setbtnloading(false);
         }
     }

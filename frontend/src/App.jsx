@@ -31,9 +31,9 @@ function App() {
 
           <Route path="/register" element={isauth ? <Navigate to="/"/> : <Register />} />
 
-          <Route path="/verify-notice" element={<VerifyNotice />} />
+          {/* <Route path="/verify-notice" element={<VerifyNotice />} />
 
-          <Route path="/verify" element={<Verify />} />
+          <Route path="/verify" element={<Verify />} /> */}
 
           <Route path="/admin" element={isauth ? <Admin /> : <Navigate to="/login" />} />
 

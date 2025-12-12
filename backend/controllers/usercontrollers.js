@@ -17,21 +17,33 @@ export const registeruser = trycatch(async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const verifyToken = crypto.randomBytes(32).toString("hex");
 
-    await users.create({
+    const newuser= await users.create({
         name, email, password: hashed,
-        verified: false,
-        verifyToken,
-        verifyTokenExpiry: Date.now() + 24 * 60 * 60 * 1000
+        verified: true,
     });
 
-    const verifyLink = `${process.env.FRONTEND_URL}/verify?token=${verifyToken}`;
+    await sendEmail(email, name);
+    await notifyAdmin(email, name);
 
-    await sendEmail(email, name, verifyLink);
+    const Token = jwt.sign(
+        { id: newuser._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "10d" }
+    );
 
-    res.status(201).json({
-        message: "Please check your email to verify your account"
+    res.cookie("token", Token, {
+        maxAge: 10 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+        path: "/"
+    });
+
+    const safeuser = await users.findById(newuser._id).select("-password");
+    res.status(200).json({
+        user: safeuser,
+        message: "Registration successful!"
     })
 
 })
@@ -53,22 +65,6 @@ export const loginuser = trycatch(async (req, res) => {
         return res.status(403).json({
             message: "password not matched"
         })
-    }
-
-    if (!user.verified) {
-        const verifyToken = crypto.randomBytes(32).toString("hex");
-
-        user.verifyToken = verifyToken;
-        user.verifyTokenExpiry = Date.now() + 24 * 60 * 60 * 1000;
-        await user.save();
-
-        const verifyLink = `${process.env.FRONTEND_URL}/verify?token=${verifyToken}`;
-
-        await sendEmail(email, user.name, verifyLink);
-
-        return res.status(403).json({
-            message: "User is not verified. Please check your email to verify your account"
-        });
     }
 
     const token = jwt.sign(
