@@ -20,6 +20,7 @@ export const registeruser = trycatch(async (req, res) => {
 
     const newuser= await users.create({
         name, email, password: hashed,
+        verified: true
     });
 
     await sendEmail(email, name);
