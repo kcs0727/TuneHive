@@ -145,7 +145,8 @@ export const myprofile = trycatch(async (req, res) => {
 
 
 export const logoutuser = trycatch(async (req, res) => {
-    res.clearCookie("token", {
+    res.cookie("token", "", {
+        maxAge: 0,
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
